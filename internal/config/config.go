@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	logger "kasikorn-line-api/pkg/log"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -30,14 +30,15 @@ func LoadConfig() *Config {
 
 	file, err := os.Open("config.yaml")
 	if err != nil {
-		log.Fatalf("error opening config.yaml: %v", err)
+		logger.Logger.Error("Error opening config.yaml")
 	}
 	defer file.Close()
 
 	var config Config
 	decoder := yaml.NewDecoder(file)
 	if err := decoder.Decode(&config); err != nil {
-		log.Fatalf("error decoding YAML: %v", err)
+		logger.Error("Error decoding YAML")
+
 	}
 
 	return &config
