@@ -1,4 +1,5 @@
 port: "8080"
+
 db:
   driver: "mysql"
   host: "localhost"
@@ -6,3 +7,8 @@ db:
   user: "user"
   password: "password"
   name: "assignment"
+
+cors:
+  allow_origins: "*"
+  allow_methods: "GET, POST, PUT, DELETE"
+  allow_headers: "Origin, Content-Type, Accept, Authorization"

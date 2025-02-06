@@ -1,28 +1,40 @@
 
 ```
 kasikorn-line-api
-├─ .env
+├─ .git
 ├─ .gitignore
 ├─ Dockerfile
 ├─ README.md
 ├─ cmd
-├─ config
-│  └─ config.go
+│  └─ main.go
+├─ config.yaml
 ├─ go.mod
+├─ go.sum
 ├─ internal
-│  ├─ handlers
-│  │  └─ account_handler.go
-│  ├─ models
-│  │  └─ account.go
-│  ├─ repositories
-│  │  └─ account_repository.go
-│  ├─ routes
-│  │  └─ routes.go
-│  └─ services
-│     └─ account_service.go
+│  ├─ config
+│  │  └─ config.go
+│  └─ user
+│     ├─ handlers
+│     │  └─ user_handler.go
+│     ├─ models
+│     │  └─ user.go
+│     ├─ repositories
+│     │  ├─ models
+│     │  │  └─ user.go
+│     │  └─ user_repository.go
+│     ├─ routes
+│     │  └─ routes.go
+│     └─ services
+│        └─ user_service.go
 └─ pkg
-   ├─ database.go
-   ├─ middleware.go
-   └─ utils.go
+   ├─ database
+   │  └─ database.go
+   ├─ error
+   │  └─ error.go
+   ├─ log
+   │  └─ logger.go
+   ├─ models
+   └─ validator
+      └─ validator.go
 
 ```

@@ -11,12 +11,13 @@ import (
 	"kasikorn-line-api/internal/config"
 	"kasikorn-line-api/pkg/database"
 	logger "kasikorn-line-api/pkg/log"
+	"kasikorn-line-api/pkg/security"
 )
 
 func main() {
 	// Initialize the logger
-	logger.Initialize()  
-	defer logger.Close() 
+	logger.Initialize()
+	defer logger.Close()
 
 	// Load config
 	appConfig := config.LoadConfig()
@@ -24,17 +25,22 @@ func main() {
 	// Initialize Fiber app
 	app := fiber.New()
 
-	dbConfig := database.Config{
+	// Set up CORS
+	security.CorsSetup(app, security.Config{
+		AllowOrigins: appConfig.CORS.AllowOrigins,
+		AllowMethods: appConfig.CORS.AllowMethods,
+		AllowHeaders: appConfig.CORS.AllowHeaders,
+	})
+
+	// Connect to the database
+	if err := database.Connect(database.Config{
 		User:     appConfig.DB.User,
 		Password: appConfig.DB.Password,
 		Host:     appConfig.DB.Host,
 		Port:     appConfig.DB.Port,
 		Name:     appConfig.DB.Name,
 		Logger:   logger.NewZapGormLogger(logger.Logger),
-	}
-
-	// Connect to the database
-	if err := database.Connect(dbConfig); err != nil {
+	}); err != nil {
 		logger.Error("Failed to connect to the database")
 	}
 
@@ -46,6 +52,6 @@ func main() {
 
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
-		logger.Fatal("Failed to start server") 
+		logger.Fatal("Failed to start server")
 	}
 }

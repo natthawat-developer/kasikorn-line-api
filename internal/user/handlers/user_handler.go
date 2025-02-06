@@ -4,7 +4,7 @@ import (
 	"kasikorn-line-api/internal/user/models"
 	"kasikorn-line-api/internal/user/services"
 	coreError "kasikorn-line-api/pkg/error"
-	"kasikorn-line-api/pkg/validator"
+	coreValidator "kasikorn-line-api/pkg/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -27,7 +27,7 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	}
 
 	// Validate the request
-	if err := validator.Validate(&req); err != nil {
+	if err := coreValidator.Validate(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(&coreError.ErrorResponse{ 
 			Code:    fiber.StatusBadRequest,
 			Message: err.Error(),
