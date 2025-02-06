@@ -15,8 +15,8 @@ import (
 
 func main() {
 	// Initialize the logger
-	logger.Initialize()  // เริ่มต้น logger
-	defer logger.Close() // ปิด logger เมื่อแอปปิดตัวลง
+	logger.Initialize()  
+	defer logger.Close() 
 
 	// Load config
 	appConfig := config.LoadConfig()
@@ -24,16 +24,18 @@ func main() {
 	// Initialize Fiber app
 	app := fiber.New()
 
+	dbConfig := database.Config{
+		User:     appConfig.DB.User,
+		Password: appConfig.DB.Password,
+		Host:     appConfig.DB.Host,
+		Port:     appConfig.DB.Port,
+		Name:     appConfig.DB.Name,
+		Logger:   logger.NewZapGormLogger(logger.Logger),
+	}
+
 	// Connect to the database
-	if err := database.Connect(
-		appConfig.DB.User,
-		appConfig.DB.Password,
-		appConfig.DB.Host,
-		appConfig.DB.Port,
-		appConfig.DB.Name,
-	); err != nil {
-		// ใช้ logger ที่เราสร้างใน pkg/log
-		logger.Error("Failed to connect to the database") // ใช้ logger แทนการเรียก zap โดยตรง
+	if err := database.Connect(dbConfig); err != nil {
+		logger.Error("Failed to connect to the database")
 	}
 
 	userRepo := userrepos.NewUserRepository(database.DB)
@@ -44,7 +46,6 @@ func main() {
 
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
-		// ใช้ logger ที่เราสร้างใน pkg/log
-		logger.Fatal("Failed to start server") // ใช้ logger แทนการเรียก zap โดยตรง
+		logger.Fatal("Failed to start server") 
 	}
 }
