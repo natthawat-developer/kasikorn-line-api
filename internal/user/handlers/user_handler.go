@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"kasikorn-line-api/internal/user/models"
 	"kasikorn-line-api/internal/user/services"
 	coreError "kasikorn-line-api/pkg/error"
+	"kasikorn-line-api/pkg/validator"
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
@@ -26,8 +27,8 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	}
 
 	// Validate the request
-	if err := req.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(&coreError.ErrorResponse{
+	if err := validator.Validate(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&coreError.ErrorResponse{ 
 			Code:    fiber.StatusBadRequest,
 			Message: err.Error(),
 		})
