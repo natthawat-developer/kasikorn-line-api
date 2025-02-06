@@ -38,3 +38,5 @@ kasikorn-line-api
       └─ validator.go
 
 ```
+
+go run github.com/golang/mock/mockgen@latest -source=internal/user/repositories/user_repository.go -destination=internal/user/repositories/mock/mock_user_repository.go -package=repositories

@@ -19,7 +19,8 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/stretchr/testify v1.9.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
@@ -29,6 +30,7 @@ require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gofiber/fiber v1.14.6
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jinzhu/copier v0.4.0
 	github.com/jinzhu/inflection v1.0.0 // indirect

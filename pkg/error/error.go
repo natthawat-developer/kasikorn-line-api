@@ -6,7 +6,7 @@ import "github.com/gofiber/fiber/v2"
 const (
 	ErrInvalidParams      = "Invalid request parameters"
 	ErrInternalServerError   = "Internal server error"
-	ErrUserNotFound       = "User not found"
+	ErrNotFound = "Record not found"
 	ErrUnauthorizedAccess = "Unauthorized access"
 )
 
