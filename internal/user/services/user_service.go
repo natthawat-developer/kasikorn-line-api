@@ -32,7 +32,7 @@ func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserRespon
 	var userResponse models.UserResponse
 	err := copier.Copy(&userResponse, repoUser)
 	if err != nil {
-		return nil, coreError.NewErrorResponse(http.StatusInternalServerError, "Failed to map user data")
+		return nil, coreError.NewErrorResponse(http.StatusInternalServerError, err.Error())
 	}
 
 	return &userResponse, nil

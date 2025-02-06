@@ -28,9 +28,9 @@ func (r *userRepository) GetUserByID(userID string) (*models.User, *error.ErrorR
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, error.NewErrorResponse(http.StatusNotFound, "User not found")
+			return nil, error.NewErrorResponse(http.StatusNotFound, err.Error())
 		}
-		return nil, error.NewErrorResponse(http.StatusInternalServerError, "Database error: "+err.Error())
+		return nil, error.NewErrorResponse(http.StatusInternalServerError, err.Error())
 	}
 	return &user, nil
 }
@@ -41,9 +41,9 @@ func (r *userRepository) GetUserGreetingByUserID(userID string) (*models.UserGre
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, error.NewErrorResponse(http.StatusNotFound, "User greeting not found")
+			return nil, error.NewErrorResponse(http.StatusNotFound, err.Error())
 		}
-		return nil, error.NewErrorResponse(http.StatusInternalServerError, "Database error: "+err.Error())
+		return nil, error.NewErrorResponse(http.StatusInternalServerError, err.Error())
 	}
 	return &userGreeting, nil
 
