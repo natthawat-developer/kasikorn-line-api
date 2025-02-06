@@ -6,13 +6,13 @@ import (
 	"kasikorn-line-api/internal/user/models"
 	"kasikorn-line-api/internal/user/repositories"
 
-	"kasikorn-line-api/pkg/error"
+	coreError "kasikorn-line-api/pkg/error"
 
 	"github.com/jinzhu/copier"
 )
 
 type UserService interface {
-	GetUserDetails(req models.UserRequest) (*models.UserResponse, *error.ErrorResponse)
+	GetUserDetails(req models.UserRequest) (*models.UserResponse, error)
 }
 
 type userService struct {
@@ -23,7 +23,7 @@ func NewUserService(repo repositories.UserRepository) UserService {
 	return &userService{repo: repo}
 }
 
-func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserResponse, *error.ErrorResponse) {
+func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserResponse, error) {
 	repoUser, errResponse := s.repo.GetUserByID(req.UserID)
 	if errResponse != nil {
 		return nil, errResponse
@@ -32,7 +32,7 @@ func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserRespon
 	var userResponse models.UserResponse
 	err := copier.Copy(&userResponse, repoUser)
 	if err != nil {
-		return nil, error.NewErrorResponse(http.StatusInternalServerError, "Failed to map user data")
+		return nil, coreError.NewErrorResponse(http.StatusInternalServerError, "Failed to map user data")
 	}
 
 	return &userResponse, nil

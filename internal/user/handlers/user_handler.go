@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"kasikorn-line-api/internal/user/services"
-	"kasikorn-line-api/internal/user/models"
-	errpkg "kasikorn-line-api/pkg/error"
 	"github.com/gofiber/fiber/v2"
+	"kasikorn-line-api/internal/user/models"
+	"kasikorn-line-api/internal/user/services"
+	coreError "kasikorn-line-api/pkg/error"
 )
 
 type UserHandler struct {
@@ -18,15 +18,16 @@ func NewUserHandler(service services.UserService) *UserHandler {
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	// Use UserRequest from models
 	var req models.UserRequest
-	if err := c.ParamsParser(&req); err != nil { // ใช้ ParamsParser ในการดึงข้อมูลจาก URL params
-		return c.Status(fiber.StatusBadRequest).JSON(&errpkg.ErrorResponse{
+	if err := c.ParamsParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&coreError.ErrorResponse{
 			Code:    fiber.StatusBadRequest,
 			Message: "Invalid request parameters",
 		})
 	}
 
+	// Validate the request
 	if err := req.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(&errpkg.ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(&coreError.ErrorResponse{
 			Code:    fiber.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -36,11 +37,11 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	user, err := h.service.GetUserDetails(req)
 	if err != nil {
 		// Check if the error is of type *errpkg.ErrorResponse
-		// if errorResponse, ok := err.(*errpkg.ErrorResponse); ok {
-		// 	return c.Status(errorResponse.Code).JSON(errorResponse)
-		// }
+		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
+			return c.Status(errorResponse.Code).JSON(errorResponse)
+		}
 		// Default error handling (for unexpected errors)
-		defaultError := &errpkg.ErrorResponse{
+		defaultError := &coreError.ErrorResponse{
 			Code:    fiber.StatusInternalServerError,
 			Message: "Something went wrong",
 		}
