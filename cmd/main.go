@@ -25,6 +25,8 @@ import (
 	"kasikorn-line-api/pkg/database"
 	logger "kasikorn-line-api/pkg/log"
 	"kasikorn-line-api/pkg/security"
+	"kasikorn-line-api/pkg/health"
+	
 )
 
 func main() {
@@ -51,6 +53,8 @@ func main() {
 		Expiration: time.Duration(appConfig.RateLimiter.Expiration) * time.Second,
 	})
 
+	security.SetupHelmet(app)
+
 	// Connect to the database
 	if err := database.Connect(database.DatabaseConfig{
 		User:     appConfig.DB.User,
@@ -62,6 +66,9 @@ func main() {
 	}); err != nil {
 		logger.Error("Failed to connect to the database")
 	}
+
+	// Register health check route
+	health.RegisterRoutes(app)
 
 	userRepo := userRepos.NewUserRepository(database.DB)
 	userService := userServices.NewUserService(userRepo)
