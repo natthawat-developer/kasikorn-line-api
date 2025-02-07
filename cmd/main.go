@@ -11,6 +11,11 @@ import (
 	bannerRoutes "kasikorn-line-api/internal/banner/routes"
 	bannerServices "kasikorn-line-api/internal/banner/services"
 
+	accountRepos "kasikorn-line-api/internal/account/repositories"
+	accountRoutes "kasikorn-line-api/internal/account/routes"
+	accountServices "kasikorn-line-api/internal/account/services"
+
+
 	"kasikorn-line-api/internal/config"
 	"kasikorn-line-api/pkg/database"
 	logger "kasikorn-line-api/pkg/log"
@@ -54,6 +59,10 @@ func main() {
 	bannerRepo := bannerRepos.NewBannerRepository(database.DB)
 	bannerService := bannerServices.NewBannerService(bannerRepo)
 	bannerRoutes.RegisterRoutes(app, bannerService)
+
+	accountRepo := accountRepos.NewAccountRepository(database.DB)
+	accountService := accountServices.NewAccountService(accountRepo)
+	accountRoutes.RegisterRoutes(app, accountService)
 	
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
