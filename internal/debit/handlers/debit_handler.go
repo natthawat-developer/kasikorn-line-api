@@ -17,8 +17,9 @@ func NewDebitHandler(service services.DebitService) *DebitHandler {
 }
 
 
-func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
-	var req models.GetDebitCardDetailsByUserIDRequest
+
+func (h *DebitHandler) GetDebitCardsByUserID(c *fiber.Ctx) error {
+	var req models.GetDebitCardsByUserIDRequest
 	// Parse request parameters
 	if err := c.ParamsParser(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
@@ -30,7 +31,7 @@ func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
 	}
 
 	// Get debit details from service
-	debit, err := h.service.GetDebitCardDetailsByUserID(req)
+	res, err := h.service.GetDebitCardsByUserID(req)
 	if err != nil {
 		// Check for custom error response
 		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
@@ -41,6 +42,35 @@ func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
 	}
 
 	// Return the debit details if no error
-	return c.Status(fiber.StatusOK).JSON(debit)
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+
+
+func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
+	var req models.GetDebitCardDetailsByCardIDRequest
+	// Parse request parameters
+	if err := c.ParamsParser(&req); err != nil {
+		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
+	}
+
+	// Validate the request
+	if err := coreValidator.Validate(&req); err != nil {
+		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	// Get debit details from service
+	res, err := h.service.GetDebitCardDetailsByCardID(req)
+	if err != nil {
+		// Check for custom error response
+		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
+			return c.Status(errorResponse.Code).JSON(errorResponse)
+		}
+		// Default error handling
+		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
+	}
+
+	// Return the debit details if no error
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
