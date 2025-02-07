@@ -6,7 +6,8 @@ import (
 )
 
 type AccountService interface {
-	GetAccountDetails(req models.AccountRequest) (*models.AccountResponse, error)
+	GetAccountByUserID(req models.GetAccountByUserIDRequest) (*models.GetAccountByUserIDResponse, error)
+	GetAccountDetail(req models.GetAccountDetailRequest) (*models.GetAccountDetailResponse, error)
 }
 
 type accountService struct {
@@ -17,22 +18,64 @@ func NewAccountService(repo repositories.AccountRepository) AccountService {
 	return &accountService{repo: repo}
 }
 
-func (s *accountService) GetAccountDetails(req models.AccountRequest) (*models.AccountResponse, error) {
-	repoAccount, errResponse := s.repo.GetAccountByID(req.AccountID)
+func (s *accountService) GetAccountByUserID(req models.GetAccountByUserIDRequest) (*models.GetAccountByUserIDResponse, error) {
+	accounts, errResponse := s.repo.GetAccountByUserID(req.UserID)
 	if errResponse != nil {
 		return nil, errResponse
 	}
 
-	accountDetails, errResponse := s.repo.GetAccountByID(req.AccountID)
+	var accountIDs []string
+	for _, account := range accounts {
+		accountIDs = append(accountIDs, account.AccountID)
+	}
+
+	accountResponse := &models.GetAccountByUserIDResponse{
+		AccountIDs: accountIDs,
+	}
+
+	return accountResponse, nil
+}
+
+func (s *accountService) GetAccountDetail(req models.GetAccountDetailRequest) (*models.GetAccountDetailResponse, error) {
+	account, errResponse := s.repo.GetAccountByID(req.AccountID)
 	if errResponse != nil {
 		return nil, errResponse
 	}
 
-	accountResponse := &models.AccountResponse{
-		AccountID: repoAccount.AccountID,
-		Type:      *repoAccount.Type,
-		Currency:  *repoAccount.Currency,
-		Issuer:    *accountDetails.Issuer,
+	accountBalance, errResponse := s.repo.GetAccountBalance(req.AccountID)
+	if errResponse != nil {
+		return nil, errResponse
+	}
+
+	accountDetail, errResponse := s.repo.GetAccountDetail(req.AccountID)
+	if errResponse != nil {
+		return nil, errResponse
+	}
+
+	accountFlags, errResponse := s.repo.GetAccountFlags(req.AccountID)
+	if errResponse != nil {
+		return nil, errResponse
+	}
+
+	var mappedFlags []models.AccountFlag
+	for _, flag := range accountFlags {
+		mappedFlags = append(mappedFlags, models.AccountFlag{
+			FlagType:  flag.FlagType,
+			FlagValue: flag.FlagValue,
+			CreatedAt: flag.CreatedAt,
+			UpdatedAt: flag.UpdatedAt,
+		})
+	}
+
+	accountResponse := &models.GetAccountDetailResponse{
+		Type:          account.Type,
+		Currency:      account.Currency,
+		Issuer:        account.Issuer,
+		Balance:       accountBalance.Amount,
+		Color:         accountDetail.Color,
+		IsMainAccount: accountDetail.IsMainAccount,
+		Progress:      accountDetail.Progress,
+		Flags:         mappedFlags,
 	}
 
 	return accountResponse, nil
