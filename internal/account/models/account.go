@@ -9,8 +9,9 @@ type GetAccountDetailRequest struct {
 type GetAccountDetailResponse struct {
 	Type          *string       `json:"type"`
 	Currency      *string       `json:"currency"`
+	AccountNumber *string       `json:"account_number"`
 	Issuer        *string       `json:"issuer"`
-	Balance       *float64      `json:"balance"`
+	Amount        *float64      `json:"amount"`
 	Color         *string       `json:"color"`
 	IsMainAccount *bool         `json:"is_main_account"`
 	Progress      *int          `json:"progress"`
