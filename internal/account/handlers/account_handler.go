@@ -70,3 +70,30 @@ func (h *AccountHandler) GetAccountByUserID(c *fiber.Ctx) error {
 	// Return the account details if no error
 	return c.Status(fiber.StatusOK).JSON(account)
 }
+
+func (h *AccountHandler) GetMainAccountByUserID(c *fiber.Ctx) error {
+	var req models.GetMainAccountByUserIDRequest
+	// Parse request parameters
+	if err := c.ParamsParser(&req); err != nil {
+		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
+	}
+
+	// Validate the request
+	if err := coreValidator.Validate(&req); err != nil {
+		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	// Get account details from service
+	account, err := h.service.GetMainAccountByUserID(req)
+	if err != nil {
+		// Check for custom error response
+		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
+			return c.Status(errorResponse.Code).JSON(errorResponse)
+		}
+		// Default error handling
+		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
+	}
+
+	// Return the account details if no error
+	return c.Status(fiber.StatusOK).JSON(account)
+}

@@ -15,11 +15,13 @@ type AccountRepository interface {
 	GetAccountBalance(accountID string) (*models.AccountBalance, *error.ErrorResponse)
 	GetAccountDetail(accountID string) (*models.AccountDetail, *error.ErrorResponse)
 	GetAccountFlags(accountID string) ([]models.AccountFlag, *error.ErrorResponse)
+	GetMainAccountByUserID(userID string) (*models.AccountDetail, *error.ErrorResponse)
 }
 
 type accountRepository struct {
 	DB *gorm.DB
 }
+
 
 func NewAccountRepository(DB *gorm.DB) AccountRepository {
 	return &accountRepository{DB: DB}
@@ -90,4 +92,20 @@ func (r *accountRepository) GetAccountFlags(accountID string) ([]models.AccountF
 
 	return flags, nil
 
+}
+
+func (r *accountRepository) GetMainAccountByUserID(userID string) (*models.AccountDetail, *error.ErrorResponse) {
+	var account models.AccountDetail
+	isMain := true 
+
+	err := r.DB.Where(&models.AccountDetail{UserID: &userID, IsMainAccount: &isMain}).First(&account).Error
+
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, error.NewErrorResponse(http.StatusNotFound, err.Error())
+		}
+		return nil, error.NewErrorResponse(http.StatusInternalServerError, err.Error())
+	}
+	return &account, nil
 }

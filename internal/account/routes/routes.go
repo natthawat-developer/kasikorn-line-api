@@ -12,4 +12,5 @@ func RegisterRoutes(app *fiber.App, accountService services.AccountService) {
 	v1AccountRoutes := app.Group("/v1/account")
 	v1AccountRoutes.Get("/:account_id", v1AccountHandler.GetAccountDetail)
 	v1AccountRoutes.Get("/user/:user_id", v1AccountHandler.GetAccountByUserID)
+	v1AccountRoutes.Get("/user/:user_id/main", v1AccountHandler.GetMainAccountByUserID)
 }

@@ -38,3 +38,11 @@ type GetAccountByUserIDRequest struct {
 type GetAccountByUserIDResponse struct {
 	AccountIDs []string `json:"account_ids"`
 }
+
+type GetMainAccountByUserIDRequest struct {
+	UserID string `params:"user_id" validate:"required,uuid"`
+}
+
+type GetMainAccountByUserIDResponse struct {
+	AccountID string `json:"account_id"`
+}

@@ -4,17 +4,20 @@ import (
 	"kasikorn-line-api/internal/account/models"
 	"kasikorn-line-api/internal/account/repositories"
 	"kasikorn-line-api/pkg/utils"
-	
 )
 
 type AccountService interface {
 	GetAccountByUserID(req models.GetAccountByUserIDRequest) (*models.GetAccountByUserIDResponse, error)
 	GetAccountDetail(req models.GetAccountDetailRequest) (*models.GetAccountDetailResponse, error)
+	GetMainAccountByUserID(req models.GetMainAccountByUserIDRequest) (*models.GetMainAccountByUserIDResponse, error)
 }
 
 type accountService struct {
 	repo repositories.AccountRepository
 }
+
+
+
 
 func NewAccountService(repo repositories.AccountRepository) AccountService {
 	return &accountService{repo: repo}
@@ -74,7 +77,7 @@ func (s *accountService) GetAccountDetail(req models.GetAccountDetailRequest) (*
 		Currency:      account.Currency,
 		AccountNumber: utils.MaskAccountNumber(account.AccountNumber),
 		Issuer:        account.Issuer,
-		Amount:       accountBalance.Amount,
+		Amount:        accountBalance.Amount,
 		Color:         accountDetail.Color,
 		IsMainAccount: accountDetail.IsMainAccount,
 		Progress:      accountDetail.Progress,
@@ -84,4 +87,14 @@ func (s *accountService) GetAccountDetail(req models.GetAccountDetailRequest) (*
 	return accountResponse, nil
 }
 
+func (s *accountService) GetMainAccountByUserID(req models.GetMainAccountByUserIDRequest) (*models.GetMainAccountByUserIDResponse, error) {
+	mainAccount, errResponse := s.repo.GetMainAccountByUserID(req.UserID)
+	if errResponse != nil {
+		return nil, errResponse
+	}
 
+	accountResponse := &models.GetMainAccountByUserIDResponse{
+		AccountID: mainAccount.AccountID,
+	}
+	return accountResponse, nil
+}
