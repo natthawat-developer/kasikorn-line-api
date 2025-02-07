@@ -12,11 +12,12 @@ type UserHandler struct {
 	service services.UserService
 }
 
+
 func NewUserHandler(service services.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 
-func (h *UserHandler) GetUser(c *fiber.Ctx) error {
+func (h *UserHandler) GetUserDetails(c *fiber.Ctx) error {
 	var req models.UserRequest
 	// Parse request parameters
 	if err := c.ParamsParser(&req); err != nil {

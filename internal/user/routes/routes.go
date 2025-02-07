@@ -1,18 +1,15 @@
 package routes
 
 import (
-	"kasikorn-line-api/internal/user/handlers"
 	"github.com/gofiber/fiber/v2"
+	v1 "kasikorn-line-api/internal/user/handlers"
+	"kasikorn-line-api/internal/user/services"
 )
 
-func SetupUserRoutes(app *fiber.App, userHandler *handlers.UserHandler) {
-	// Register user-related routes
-	userRoutes(app, userHandler)
-}
+func RegisterRoutes(app *fiber.App, userService services.UserService) {
 
-func userRoutes(app *fiber.App, userHandler *handlers.UserHandler) {
-	user := app.Group("/user") // Grouping routes for user
+	v1UserHandler := v1.NewUserHandler(userService)
+	v1UserRoutes := app.Group("/v1/user")
+	v1UserRoutes.Get("/:user_id", v1UserHandler.GetUserDetails)
 
-	// Route for getting user by user_id
-	user.Get("/:user_id", userHandler.GetUser)
 }

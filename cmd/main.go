@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 
-	userHandlers "kasikorn-line-api/internal/user/handlers"
 	userRepos "kasikorn-line-api/internal/user/repositories"
 	userRoutes "kasikorn-line-api/internal/user/routes"
 	userServices "kasikorn-line-api/internal/user/services"
@@ -51,9 +50,7 @@ func main() {
 
 	userRepo := userRepos.NewUserRepository(database.DB)
 	userService := userServices.NewUserService(userRepo)
-	userHandler := userHandlers.NewUserHandler(userService)
-
-	userRoutes.SetupUserRoutes(app, userHandler)
+	userRoutes.RegisterRoutes(app, userService)
 
 	bannerRepo := bannerRepos.NewBannerRepository(database.DB)
 	bannerService := bannerServices.NewBannerService(bannerRepo)
