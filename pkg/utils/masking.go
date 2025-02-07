@@ -9,3 +9,16 @@ func MaskAccountNumber(accountNumber *string) *string {
 	masked := (*accountNumber)[:2] + "••••" + (*accountNumber)[len(*accountNumber)-2:]
 	return &masked
 }
+
+
+
+
+func MaskDebitCardNumber(cardNumber *string) string {
+	// Check if cardNumber is nil or not exactly 19 characters (including spaces)
+	if cardNumber == nil || len(*cardNumber) != 19 {
+		return "" // Return empty string or handle error as needed
+	}
+
+	// Mask the middle digits
+	return (*cardNumber)[:7] + "•• •••• " + (*cardNumber)[15:]
+}

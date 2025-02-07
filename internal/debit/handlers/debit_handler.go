@@ -16,8 +16,6 @@ func NewDebitHandler(service services.DebitService) *DebitHandler {
 	return &DebitHandler{service: service}
 }
 
-
-
 func (h *DebitHandler) GetDebitCardsByUserID(c *fiber.Ctx) error {
 	var req models.GetDebitCardsByUserIDRequest
 	// Parse request parameters
@@ -45,8 +43,6 @@ func (h *DebitHandler) GetDebitCardsByUserID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-
-
 func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
 	var req models.GetDebitCardDetailsByCardIDRequest
 	// Parse request parameters
@@ -54,6 +50,11 @@ func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
 	}
 
+	// Parse query parameters (query params)
+	if err := c.QueryParser(&req); err != nil {
+		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
+	}
+	
 	// Validate the request
 	if err := coreValidator.Validate(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
@@ -73,4 +74,3 @@ func (h *DebitHandler) GetDebitDetail(c *fiber.Ctx) error {
 	// Return the debit details if no error
 	return c.Status(fiber.StatusOK).JSON(res)
 }
-

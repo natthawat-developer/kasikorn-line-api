@@ -9,8 +9,10 @@ type GetDebitCardsByUserIDResponse struct {
 }
 
 type GetDebitCardDetailsByCardIDRequest struct {
-	CardID string `params:"card_id" validate:"required,uuid"`
+	CardID            string `params:"card_id" validate:"required,uuid"`
+	MaskDebitCardNumber bool   `query:"mask_debit_card_number" validate:"omitempty"`
 }
+
 type GetDebitCardDetailsByCardIDResponse struct {
 	Name        *string `json:"name"`
 	Color       *string `json:"color"`

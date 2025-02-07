@@ -3,6 +3,7 @@ package services
 import (
 	"kasikorn-line-api/internal/debit/models"
 	"kasikorn-line-api/internal/debit/repositories"
+	"kasikorn-line-api/pkg/utils"
 )
 
 type DebitService interface {
@@ -57,12 +58,20 @@ func (s *debitService) GetDebitCardDetailsByCardID(req models.GetDebitCardDetail
 		return nil, errResponse
 	}
 
+	debitCardNumber := debitCardDetails.Number
+	if req.MaskDebitCardNumber {
+		maskedNumber := utils.MaskDebitCardNumber(debitCardNumber)
+		debitCardNumber = &maskedNumber
+	}
+
+	
+
 	debitCardDetailsResponse := &models.GetDebitCardDetailsByCardIDResponse{
 		Name:        debitCard.Name,
 		Color:       debitCardDesign.Color,
 		BorderColor: debitCardDesign.BorderColor,
 		Issuer:      debitCardDetails.Issuer,
-		Number:      debitCardDetails.Number,
+		Number:      debitCardNumber,
 		Status:      debitCardStatus.Status,
 	}
 
