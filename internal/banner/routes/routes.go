@@ -1,18 +1,15 @@
 package routes
 
 import (
-	"kasikorn-line-api/internal/banner/handlers"
 	"github.com/gofiber/fiber/v2"
+	v1 "kasikorn-line-api/internal/banner/handlers"
+	"kasikorn-line-api/internal/banner/services"
 )
 
-func SetupBannerRoutes(app *fiber.App, bannerHandler *handlers.BannerHandler) {
-	// Register banner-related routes
-	bannerRoutes(app, bannerHandler)
-}
+func RegisterRoutes(app *fiber.App, bannerService services.BannerService) {
 
-func bannerRoutes(app *fiber.App, bannerHandler *handlers.BannerHandler) {
-	banner := app.Group("/banner") // Grouping routes for banner
+	v1BannerHandler := v1.NewBannerHandler(bannerService)
+	v1BannerRoutes := app.Group("/v1/banner")
+	v1BannerRoutes.Get("/:user_id", v1BannerHandler.GetBanner)
 
-	// Route for getting banners by user_id
-	banner.Get("/:user_id", bannerHandler.GetBanner)
 }

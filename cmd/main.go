@@ -7,7 +7,6 @@ import (
 	userRoutes "kasikorn-line-api/internal/user/routes"
 	userServices "kasikorn-line-api/internal/user/services"
 
-	bannerHandlers "kasikorn-line-api/internal/banner/handlers"
 	bannerRepos "kasikorn-line-api/internal/banner/repositories"
 	bannerRoutes "kasikorn-line-api/internal/banner/routes"
 	bannerServices "kasikorn-line-api/internal/banner/services"
@@ -54,9 +53,8 @@ func main() {
 
 	bannerRepo := bannerRepos.NewBannerRepository(database.DB)
 	bannerService := bannerServices.NewBannerService(bannerRepo)
-	bannerHandler := bannerHandlers.NewBannerHandler(bannerService)
-
-	bannerRoutes.SetupBannerRoutes(app, bannerHandler)
+	bannerRoutes.RegisterRoutes(app, bannerService)
+	
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
 		logger.Fatal("Failed to start server")
