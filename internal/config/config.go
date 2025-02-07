@@ -24,6 +24,11 @@ type Config struct {
 		AllowMethods string `yaml:"allow_methods"`
 		AllowHeaders string `yaml:"allow_headers"`
 	} `yaml:"cors"`
+
+	RateLimiter struct {
+		MaxRequests    int    `yaml:"max_requests"`
+		Expiration     int    `yaml:"expiration"`
+	} `yaml:"rate_limiter"`
 }
 
 func LoadConfig() *Config {

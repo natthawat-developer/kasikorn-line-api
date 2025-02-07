@@ -11,7 +11,7 @@ import (
 var DB *gorm.DB
 
 // Config is the configuration for the database
-type Config struct {
+type DatabaseConfig struct {
 	User     string
 	Password string
 	Host     string
@@ -21,22 +21,22 @@ type Config struct {
 }
 
 // Connect establishes a connection to the database with dynamic config
-func Connect(config Config) error {
+func Connect(databaseConfig DatabaseConfig) error {
 	var err error
 
 	// Build the Data Source Name (DSN) string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		config.User, config.Password, config.Host, config.Port, config.Name,
+	databaseConfig.User, databaseConfig.Password, databaseConfig.Host, databaseConfig.Port, databaseConfig.Name,
 	)
 
 	// Set the logger if provided, else use the default logger
-	if config.Logger == nil {
-		config.Logger = logger.Default.LogMode(logger.Info)
+	if databaseConfig.Logger == nil {
+		databaseConfig.Logger = logger.Default.LogMode(logger.Info)
 	}
 
 	// Open the database connection using the config values
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: config.Logger,
+		Logger: databaseConfig.Logger,
 	})
 
 	if err != nil {

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 
 	userRepos "kasikorn-line-api/internal/user/repositories"
@@ -18,7 +20,6 @@ import (
 	debitRepos "kasikorn-line-api/internal/debit/repositories"
 	debitRoutes "kasikorn-line-api/internal/debit/routes"
 	debitServices "kasikorn-line-api/internal/debit/services"
-
 
 	"kasikorn-line-api/internal/config"
 	"kasikorn-line-api/pkg/database"
@@ -38,14 +39,20 @@ func main() {
 	app := fiber.New()
 
 	// Set up CORS
-	security.CorsSetup(app, security.Config{
+	security.CorsSetup(app, security.CorsConfig{
 		AllowOrigins: appConfig.CORS.AllowOrigins,
 		AllowMethods: appConfig.CORS.AllowMethods,
 		AllowHeaders: appConfig.CORS.AllowHeaders,
 	})
 
+	// Set up Rate Limiting
+	security.SetupRateLimiter(app, security.RateLimiterConfig{
+		Max:        appConfig.RateLimiter.MaxRequests,
+		Expiration: time.Duration(appConfig.RateLimiter.Expiration) * time.Second,
+	})
+
 	// Connect to the database
-	if err := database.Connect(database.Config{
+	if err := database.Connect(database.DatabaseConfig{
 		User:     appConfig.DB.User,
 		Password: appConfig.DB.Password,
 		Host:     appConfig.DB.Host,
@@ -71,7 +78,7 @@ func main() {
 	debitRepo := debitRepos.NewDebitRepository(database.DB)
 	debitService := debitServices.NewDebitService(debitRepo)
 	debitRoutes.RegisterRoutes(app, debitService)
-	
+
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
 		logger.Fatal("Failed to start server")
