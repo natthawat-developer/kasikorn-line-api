@@ -1,14 +1,8 @@
 package services
 
 import (
-	"net/http"
-
 	"kasikorn-line-api/internal/user/models"
 	"kasikorn-line-api/internal/user/repositories"
-
-	coreError "kasikorn-line-api/pkg/error"
-
-	"github.com/jinzhu/copier"
 )
 
 type UserService interface {
@@ -29,11 +23,16 @@ func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserRespon
 		return nil, errResponse
 	}
 
-	var userResponse models.UserResponse
-	err := copier.Copy(&userResponse, repoUser)
-	if err != nil {
-		return nil, coreError.NewErrorResponse(http.StatusInternalServerError, err.Error())
+	userGreeting, errResponse := s.repo.GetUserGreetingByUserID(req.UserID)
+	if errResponse != nil {
+		return nil, errResponse
 	}
 
-	return &userResponse, nil
+	userResponse := &models.UserResponse{
+		UserID:   repoUser.UserID,
+		Name:     repoUser.Name,
+		Greeting: userGreeting.Greeting,
+	}
+
+	return userResponse, nil
 }

@@ -3,10 +3,15 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 
-	userhandlers "kasikorn-line-api/internal/user/handlers"
-	userrepos "kasikorn-line-api/internal/user/repositories"
-	userroutes "kasikorn-line-api/internal/user/routes"
-	userservices "kasikorn-line-api/internal/user/services"
+	userHandlers "kasikorn-line-api/internal/user/handlers"
+	userRepos "kasikorn-line-api/internal/user/repositories"
+	userRoutes "kasikorn-line-api/internal/user/routes"
+	userServices "kasikorn-line-api/internal/user/services"
+
+	bannerHandlers "kasikorn-line-api/internal/banner/handlers"
+	bannerRepos "kasikorn-line-api/internal/banner/repositories"
+	bannerRoutes "kasikorn-line-api/internal/banner/routes"
+	bannerServices "kasikorn-line-api/internal/banner/services"
 
 	"kasikorn-line-api/internal/config"
 	"kasikorn-line-api/pkg/database"
@@ -44,12 +49,17 @@ func main() {
 		logger.Error("Failed to connect to the database")
 	}
 
-	userRepo := userrepos.NewUserRepository(database.DB)
-	userService := userservices.NewUserService(userRepo)
-	userHandler := userhandlers.NewUserHandler(userService)
+	userRepo := userRepos.NewUserRepository(database.DB)
+	userService := userServices.NewUserService(userRepo)
+	userHandler := userHandlers.NewUserHandler(userService)
 
-	userroutes.SetupUserRoutes(app, userHandler)
+	userRoutes.SetupUserRoutes(app, userHandler)
 
+	bannerRepo := bannerRepos.NewBannerRepository(database.DB)
+	bannerService := bannerServices.NewBannerService(bannerRepo)
+	bannerHandler := bannerHandlers.NewBannerHandler(bannerService)
+
+	bannerRoutes.SetupBannerRoutes(app, bannerHandler)
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
 		logger.Fatal("Failed to start server")
