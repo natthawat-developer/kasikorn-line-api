@@ -15,6 +15,10 @@ import (
 	accountRoutes "kasikorn-line-api/internal/account/routes"
 	accountServices "kasikorn-line-api/internal/account/services"
 
+	debitRepos "kasikorn-line-api/internal/debit/repositories"
+	debitRoutes "kasikorn-line-api/internal/debit/routes"
+	debitServices "kasikorn-line-api/internal/debit/services"
+
 
 	"kasikorn-line-api/internal/config"
 	"kasikorn-line-api/pkg/database"
@@ -63,6 +67,10 @@ func main() {
 	accountRepo := accountRepos.NewAccountRepository(database.DB)
 	accountService := accountServices.NewAccountService(accountRepo)
 	accountRoutes.RegisterRoutes(app, accountService)
+
+	debitRepo := debitRepos.NewDebitRepository(database.DB)
+	debitService := debitServices.NewDebitService(debitRepo)
+	debitRoutes.RegisterRoutes(app, debitService)
 	
 	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
