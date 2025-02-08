@@ -22,7 +22,6 @@ type accountRepository struct {
 	DB *gorm.DB
 }
 
-
 func NewAccountRepository(DB *gorm.DB) AccountRepository {
 	return &accountRepository{DB: DB}
 }
@@ -96,10 +95,9 @@ func (r *accountRepository) GetAccountFlags(accountID string) ([]models.AccountF
 
 func (r *accountRepository) GetMainAccountByUserID(userID string) (*models.AccountDetail, *error.ErrorResponse) {
 	var account models.AccountDetail
-	isMain := true 
+	isMain := true
 
 	err := r.DB.Where(&models.AccountDetail{UserID: &userID, IsMainAccount: &isMain}).First(&account).Error
-
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
