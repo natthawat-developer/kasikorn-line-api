@@ -28,7 +28,6 @@ func (s *bannerService) GetBannerDetails(req models.BannerRequest) ([]*models.Ba
 	var bannerResponses []*models.BannerResponse
 	for _, banner := range banners {
 		bannerResponses = append(bannerResponses, &models.BannerResponse{
-			BannerID:   banner.BannerID,
 			Title:      *banner.Title,
 			Description: *banner.Description,
 			Image:      *banner.Image,

@@ -29,7 +29,6 @@ func TestGetUserDetails_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
-	assert.Equal(t, "123", resp.UserID)
 	assert.Equal(t, "John Doe", resp.Name)
 }
 

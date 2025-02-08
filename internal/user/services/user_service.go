@@ -29,7 +29,6 @@ func (s *userService) GetUserDetails(req models.UserRequest) (*models.UserRespon
 	}
 
 	userResponse := &models.UserResponse{
-		UserID:   repoUser.UserID,
 		Name:     repoUser.Name,
 		Greeting: userGreeting.Greeting,
 	}
