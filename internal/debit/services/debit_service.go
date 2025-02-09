@@ -58,22 +58,19 @@ func (s *debitService) GetDebitCardDetailsByCardID(req models.GetDebitCardDetail
 		return nil, errResponse
 	}
 
+
 	debitCardNumber := debitCardDetails.Number
-	if req.MaskDebitCardNumber {
+	if !req.UnmaskDebitCardNumber && debitCardNumber != nil {
 		maskedNumber := utils.MaskDebitCardNumber(debitCardNumber)
 		debitCardNumber = &maskedNumber
 	}
 
-	
-
-	debitCardDetailsResponse := &models.GetDebitCardDetailsByCardIDResponse{
+	return &models.GetDebitCardDetailsByCardIDResponse{
 		Name:        debitCard.Name,
 		Color:       debitCardDesign.Color,
 		BorderColor: debitCardDesign.BorderColor,
 		Issuer:      debitCardDetails.Issuer,
 		Number:      debitCardNumber,
 		Status:      debitCardStatus.Status,
-	}
-
-	return debitCardDetailsResponse, nil
+	}, nil
 }

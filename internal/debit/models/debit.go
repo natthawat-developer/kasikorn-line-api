@@ -10,7 +10,7 @@ type GetDebitCardsByUserIDResponse struct {
 
 type GetDebitCardDetailsByCardIDRequest struct {
 	CardID            string `params:"card_id" validate:"required,uuid"`
-	MaskDebitCardNumber bool   `query:"mask_debit_card_number" validate:"omitempty"`
+	UnmaskDebitCardNumber bool   `query:"unmask_debit_card_number" validate:"omitempty"`
 }
 
 type GetDebitCardDetailsByCardIDResponse struct {

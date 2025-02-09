@@ -2,7 +2,8 @@ port: "8080"
 
 db:
   driver: "mysql"
-  host: "kasikorn-line-api-mysql-container"
+  host: "localhost"
+  # host: "kasikorn-line-api-mysql-container"
   port: "3306"
   user: "user"
   password: "password"
