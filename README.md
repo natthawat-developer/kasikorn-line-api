@@ -41,15 +41,25 @@ kasikorn-line-api
 │  │  └─ services
 │  │     └─ user_service.go
 │  ├─ other modules...
+│
 └─ pkg
    ├─ database
    │  └─ database.go
    ├─ error
    │  └─ error.go
+   ├─ health
+   │  └─ health.go
    ├─ log
    │  └─ logger.go
-   ├─ validator
-   │  └─ validator.go
+   ├─ security
+   │  ├─ cors.go
+   │  ├─ helmet.go
+   │  └─ ratelimit.go
+   ├─ utils
+   │  ├─ masking.go
+   │  └─ masking_test.go
+   └─ validator
+      └─ validator.go
 ```
 
 ## Installation
