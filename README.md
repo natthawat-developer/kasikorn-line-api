@@ -130,6 +130,3 @@ go test ./...
 - 
 ## License
 This project is licensed under the MIT License.
-
-
-go run github.com/golang/mock/mockgen@latest  -source=internal/account/repositories/account_repository.go -destination=internal/account/repositories/mock/mock_account_repository.go -package=mock
