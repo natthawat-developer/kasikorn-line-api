@@ -89,6 +89,10 @@ func (s *accountService) GetMainAccountByUserID(req models.GetMainAccountByUserI
 		return nil, errResponse
 	}
 
+	if mainAccount == nil {
+		return nil, nil
+	}
+
 	accountResponse := &models.GetMainAccountByUserIDResponse{
 		AccountID: mainAccount.AccountID,
 	}

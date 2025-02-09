@@ -160,3 +160,79 @@ func TestGetMainAccountByUserID_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 }
+
+func TestGetAccountByUserID_EmptyResponse(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock.NewMockAccountRepository(ctrl)
+	accountService := NewAccountService(mockRepo)
+
+	req := models.GetAccountByUserIDRequest{UserID: "user123"}
+	mockRepo.EXPECT().GetAccountByUserID("user123").Return([]repoModel.Account{}, nil)
+
+	resp, err := accountService.GetAccountByUserID(req)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Empty(t, resp.AccountIDs)
+}
+
+func TestGetAccountDetail_PartialData(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock.NewMockAccountRepository(ctrl)
+	accountService := NewAccountService(mockRepo)
+
+	req := models.GetAccountDetailRequest{AccountID: "account1"}
+
+	repoAccount := &repoModel.Account{
+		AccountID: "account1",
+		Type:      strPtr("Checking"),
+		Currency:  nil,
+	}
+
+	repoAccountBalance := &repoModel.AccountBalance{
+		Amount: nil,
+	}
+
+	repoAccountDetail := &repoModel.AccountDetail{
+		Color:         nil,
+		IsMainAccount: nil,
+		Progress:      nil,
+	}
+
+	mockRepo.EXPECT().GetAccountByID("account1").Return(repoAccount, nil)
+	mockRepo.EXPECT().GetAccountBalance("account1").Return(repoAccountBalance, nil)
+	mockRepo.EXPECT().GetAccountDetail("account1").Return(repoAccountDetail, nil)
+	mockRepo.EXPECT().GetAccountFlags("account1").Return(nil, nil)
+
+	resp, err := accountService.GetAccountDetail(req)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, "Checking", *resp.Type)
+	assert.Nil(t, resp.Currency)
+	assert.Nil(t, resp.Amount)
+	assert.Nil(t, resp.Color)
+	assert.Nil(t, resp.IsMainAccount)
+	assert.Nil(t, resp.Progress)
+	assert.Empty(t, resp.Flags)
+}
+
+func TestGetMainAccountByUserID_NoMainAccount(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock.NewMockAccountRepository(ctrl)
+	accountService := NewAccountService(mockRepo)
+
+	req := models.GetMainAccountByUserIDRequest{UserID: "user123"}
+	mockRepo.EXPECT().GetMainAccountByUserID("user123").Return(nil, nil)
+
+	resp, err := accountService.GetMainAccountByUserID(req)
+
+	assert.NoError(t, err)
+	assert.Nil(t, resp)
+}
