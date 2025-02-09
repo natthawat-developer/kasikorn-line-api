@@ -18,27 +18,24 @@ func NewBannerHandler(service services.BannerService) *BannerHandler {
 
 func (h *BannerHandler) GetBanner(c *fiber.Ctx) error {
 	var req models.BannerRequest
-	// Parse request parameters
+
 	if err := c.ParamsParser(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
 	}
 
-	// Validate the request
 	if err := coreValidator.Validate(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	// Get banner details from service
 	banners, err := h.service.GetBannerDetails(req)
 	if err != nil {
-		// Check for custom error response
+
 		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
 			return c.Status(errorResponse.Code).JSON(errorResponse)
 		}
-		// Default error handling
+
 		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
 	}
 
-	// Return the banners if no error
 	return c.Status(fiber.StatusOK).JSON(banners)
 }

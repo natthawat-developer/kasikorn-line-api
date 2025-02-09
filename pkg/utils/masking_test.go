@@ -20,7 +20,7 @@ func TestMaskDebitCardNumber(t *testing.T) {
 		{
 			name:           "Short card number",
 			input:          strPtr("1234 5678"),
-			expectedOutput: "", 
+			expectedOutput: "",
 		},
 		{
 			name:           "Nil card number",
@@ -30,7 +30,7 @@ func TestMaskDebitCardNumber(t *testing.T) {
 		{
 			name:           "Extra long card number",
 			input:          strPtr("1234 5678 9012 3456 7890"),
-			expectedOutput: "", 
+			expectedOutput: "",
 		},
 	}
 
@@ -42,7 +42,6 @@ func TestMaskDebitCardNumber(t *testing.T) {
 	}
 }
 
-// Helper function
 func strPtr(s string) *string {
 	return &s
 }

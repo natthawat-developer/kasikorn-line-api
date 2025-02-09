@@ -10,7 +10,7 @@ import (
 
 var DB *gorm.DB
 
-// Config is the configuration for the database
+
 type DatabaseConfig struct {
 	User     string
 	Password string
@@ -20,21 +20,21 @@ type DatabaseConfig struct {
 	Logger   logger.Interface
 }
 
-// Connect establishes a connection to the database with dynamic config
+
 func Connect(databaseConfig DatabaseConfig) error {
 	var err error
 
-	// Build the Data Source Name (DSN) string
+	
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 	databaseConfig.User, databaseConfig.Password, databaseConfig.Host, databaseConfig.Port, databaseConfig.Name,
 	)
 
-	// Set the logger if provided, else use the default logger
+	
 	if databaseConfig.Logger == nil {
 		databaseConfig.Logger = logger.Default.LogMode(logger.Info)
 	}
 
-	// Open the database connection using the config values
+	
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: databaseConfig.Logger,
 	})
@@ -44,17 +44,17 @@ func Connect(databaseConfig DatabaseConfig) error {
 		return err
 	}
 
-	// Optional: Set other database connection pool options
+	
 	sqlDB, err := DB.DB()
 	if err != nil {
 		log.Printf("Failed to get sql.DB from gorm DB instance: %v", err)
 		return err
 	}
 
-	// Set connection pool options (optional)
-	sqlDB.SetMaxIdleConns(10)   // Set max idle connections
-	sqlDB.SetMaxOpenConns(100)  // Set max open connections
-	sqlDB.SetConnMaxLifetime(60) // Set max connection lifetime (seconds)
+	
+	sqlDB.SetMaxIdleConns(10)   
+	sqlDB.SetMaxOpenConns(100) 
+	sqlDB.SetConnMaxLifetime(60) 
 
 	return nil
 }

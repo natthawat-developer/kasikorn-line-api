@@ -79,7 +79,6 @@ func TestGetDebitCardDetailsByCardID_NotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, err.(*coreError.ErrorResponse).Code)
 }
 
-// Helper function to create pointer
 func strPtr(s string) *string {
 	return &s
 }

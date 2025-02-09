@@ -48,13 +48,10 @@ func TestGetBannerDetails_NoBanners(t *testing.T) {
 
 	resp, err := bannerService.GetBannerDetails(req)
 
-	// Assert that there is no error
 	assert.NoError(t, err)
 
-	// Assert that the response is not nil (in case the service is returning an empty slice instead of nil)
 	assert.NotNil(t, resp)
 
-	// Assert that the response is an empty slice (if that's the expected behavior)
 	assert.Empty(t, resp)
 }
 
@@ -67,20 +64,16 @@ func TestGetBannerDetails_DatabaseError(t *testing.T) {
 
 	req := models.BannerRequest{UserID: "user123"}
 
-	// Assuming that *error.ErrorResponse is the expected error type
 	mockError := &coreError.ErrorResponse{Message: "database error"}
 
-	// Return the mockError when GetBannerByUserID is called
 	mockRepo.EXPECT().GetBannerByUserID("user123").Return(nil, mockError)
 
 	resp, err := bannerService.GetBannerDetails(req)
 
-	// Assert that the error is not nil and the response is nil
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 }
 
-// Helper function to create pointer
 func strPtr(s string) *string {
 	return &s
 }

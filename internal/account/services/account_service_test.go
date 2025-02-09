@@ -11,7 +11,6 @@ import (
 	coreError "kasikorn-line-api/pkg/error"
 )
 
-// TestGetAccountByUserID_Success tests successful retrieval of account by user ID.
 func TestGetAccountByUserID_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -36,27 +35,22 @@ func TestGetAccountByUserID_Success(t *testing.T) {
 	assert.Equal(t, "account2", resp.AccountIDs[1])
 }
 
-// Helper function to create pointer to string
 func strPtr(s string) *string {
 	return &s
 }
 
-// Helper function to create pointer to bool
 func boolPtr(b bool) *bool {
 	return &b
 }
 
-// Helper function to create pointer to float64
 func float64Ptr(f float64) *float64 {
 	return &f
 }
 
-// Helper function to create pointer to int
 func intPtr(i int) *int {
 	return &i
 }
 
-// TestGetAccountDetail_Success tests successful retrieval of account details.
 func TestGetAccountDetail_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -66,30 +60,28 @@ func TestGetAccountDetail_Success(t *testing.T) {
 
 	req := models.GetAccountDetailRequest{AccountID: "account1"}
 
-	// Create pointer to repoAccount
 	repoAccount := &repoModel.Account{
-		AccountID:    "account1",
-		Type:         strPtr("Saving"),    // Pointer to string
-		Currency:     strPtr("USD"),       // Pointer to string
-		AccountNumber: strPtr("123456"),   // Pointer to string
-		Issuer:       strPtr("BankA"),     // Pointer to string
+		AccountID:     "account1",
+		Type:          strPtr("Saving"),
+		Currency:      strPtr("USD"),
+		AccountNumber: strPtr("123456"),
+		Issuer:        strPtr("BankA"),
 	}
 
 	repoAccountBalance := &repoModel.AccountBalance{
-		Amount: float64Ptr(1000.0), // Pointer to float64
+		Amount: float64Ptr(1000.0),
 	}
 
 	repoAccountDetail := &repoModel.AccountDetail{
-		Color:         strPtr("Blue"),    // Pointer to string
-		IsMainAccount: boolPtr(true),     // Pointer to bool
-		Progress:      intPtr(80),        // Pointer to int
+		Color:         strPtr("Blue"),
+		IsMainAccount: boolPtr(true),
+		Progress:      intPtr(80),
 	}
 
 	repoAccountFlags := []repoModel.AccountFlag{
-		{FlagType: "Active", FlagValue: "true"},  // Regular strings, no pointers needed
+		{FlagType: "Active", FlagValue: "true"},
 	}
 
-	// Mock repo method calls with pointers
 	mockRepo.EXPECT().GetAccountByID("account1").Return(repoAccount, nil)
 	mockRepo.EXPECT().GetAccountBalance("account1").Return(repoAccountBalance, nil)
 	mockRepo.EXPECT().GetAccountDetail("account1").Return(repoAccountDetail, nil)
@@ -99,20 +91,18 @@ func TestGetAccountDetail_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
-	assert.Equal(t, "Saving", *resp.Type)  // Dereference pointer for comparison
-	assert.Equal(t, "USD", *resp.Currency)  // Dereference pointer for comparison
-	assert.Equal(t, "123456", *resp.AccountNumber)  // Dereference pointer for comparison
-	assert.Equal(t, "BankA", *resp.Issuer)  // Dereference pointer for comparison
-	assert.Equal(t, 1000.0, *resp.Amount)  // Dereference pointer for comparison
-	assert.Equal(t, "Blue", *resp.Color)  // Dereference pointer for comparison
-	assert.True(t, *resp.IsMainAccount)  // Dereference pointer for comparison
-	assert.Equal(t, 80, *resp.Progress)  // Dereference pointer for comparison
+	assert.Equal(t, "Saving", *resp.Type)
+	assert.Equal(t, "USD", *resp.Currency)
+	assert.Equal(t, "123456", *resp.AccountNumber)
+	assert.Equal(t, "BankA", *resp.Issuer)
+	assert.Equal(t, 1000.0, *resp.Amount)
+	assert.Equal(t, "Blue", *resp.Color)
+	assert.True(t, *resp.IsMainAccount)
+	assert.Equal(t, 80, *resp.Progress)
 	assert.Len(t, resp.Flags, 1)
-	assert.Equal(t, "Active", resp.Flags[0].FlagType)  // No dereferencing needed here
+	assert.Equal(t, "Active", resp.Flags[0].FlagType)
 }
 
-
-// TestGetAccountDetail_Error tests the error case for account details.
 func TestGetAccountDetail_Error(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -123,18 +113,14 @@ func TestGetAccountDetail_Error(t *testing.T) {
 	req := models.GetAccountDetailRequest{AccountID: "account1"}
 	mockError := &coreError.ErrorResponse{Message: "database error"}
 
-	// Simulate error for GetAccountByID method
-	mockRepo.EXPECT().GetAccountByID("account1").Return(nil, mockError) // Return pointer to nil (no account)
+	mockRepo.EXPECT().GetAccountByID("account1").Return(nil, mockError)
 
 	resp, err := accountService.GetAccountDetail(req)
 
-	// Assert that an error is returned
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 }
 
-
-// TestGetMainAccountByUserID_Success tests successful retrieval of main account by user ID.
 func TestGetMainAccountByUserID_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -144,12 +130,10 @@ func TestGetMainAccountByUserID_Success(t *testing.T) {
 
 	req := models.GetMainAccountByUserIDRequest{UserID: "user123"}
 
-	// Change to AccountDetail if that's the expected return type
 	repoMainAccount := repoModel.AccountDetail{
-		AccountID: "mainAccountID",  // Assuming AccountDetail has AccountID field
+		AccountID: "mainAccountID",
 	}
 
-	// Update the mock to return *repoModel.AccountDetail
 	mockRepo.EXPECT().GetMainAccountByUserID("user123").Return(&repoMainAccount, nil)
 
 	resp, err := accountService.GetMainAccountByUserID(req)
@@ -159,8 +143,6 @@ func TestGetMainAccountByUserID_Success(t *testing.T) {
 	assert.Equal(t, "mainAccountID", resp.AccountID)
 }
 
-
-// TestGetMainAccountByUserID_Error tests error handling when retrieving the main account by user ID.
 func TestGetMainAccountByUserID_Error(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -171,8 +153,6 @@ func TestGetMainAccountByUserID_Error(t *testing.T) {
 	req := models.GetMainAccountByUserIDRequest{UserID: "user123"}
 	mockError := &coreError.ErrorResponse{Message: "database error"}
 
-	// Simulate error for GetMainAccountByUserID method
-	// Use AccountDetail here instead of Account if that's what the method expects
 	mockRepo.EXPECT().GetMainAccountByUserID("user123").Return(nil, mockError)
 
 	resp, err := accountService.GetMainAccountByUserID(req)
@@ -180,4 +160,3 @@ func TestGetMainAccountByUserID_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 }
-

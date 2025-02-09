@@ -17,16 +17,15 @@ func TestGetTransactionByUserID_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) // Use mock repository
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionByUserIDRequest{UserID: "user123"}
-	repoTransactions := []repoModel.Transaction{  // Change to models.Transaction instead of *repoModel.Transaction
+	repoTransactions := []repoModel.Transaction{
 		{TransactionID: "txn_001"},
 		{TransactionID: "txn_002"},
 	}
 
-	// Fix the mock expectation to return []models.Transaction
 	mockRepo.EXPECT().GetTransactionByUserID("user123").Return(repoTransactions, nil)
 
 	resp, err := transactionService.GetTransactionByUserID(req)
@@ -36,12 +35,11 @@ func TestGetTransactionByUserID_Success(t *testing.T) {
 	assert.ElementsMatch(t, []string{"txn_001", "txn_002"}, resp.TransactionIDs)
 }
 
-
 func TestGetTransactionByUserID_NoTransactions(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) 
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionByUserIDRequest{UserID: "user123"}
@@ -59,7 +57,7 @@ func TestGetTransactionByUserID_DatabaseError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) // Use mock repository
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionByUserIDRequest{UserID: "user123"}
@@ -77,14 +75,14 @@ func TestGetTransactionDetail_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) // Use mock repository
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionDetailRequest{TransactionID: "txn_001"}
 	repoTransaction := &repoModel.Transaction{
-		Name:   strPtr("John Doe"),   // Use pointer for string
-		Image:  strPtr("image_url"),  // Use pointer for string
-		IsBank: boolPtr(true),        // Use pointer for bool
+		Name:   strPtr("John Doe"),
+		Image:  strPtr("image_url"),
+		IsBank: boolPtr(true),
 	}
 
 	mockRepo.EXPECT().GetTransactionByTransactionID("txn_001").Return(repoTransaction, nil)
@@ -93,16 +91,16 @@ func TestGetTransactionDetail_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
-	assert.Equal(t, "John Doe", *resp.Name)  // Dereference pointer
-	assert.Equal(t, "image_url", *resp.Image)  // Dereference pointer
-	assert.Equal(t, true, *resp.IsBank)  // Dereference pointer
+	assert.Equal(t, "John Doe", *resp.Name)
+	assert.Equal(t, "image_url", *resp.Image)
+	assert.Equal(t, true, *resp.IsBank)
 }
 
 func TestGetTransactionDetail_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) // Use mock repository
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionDetailRequest{TransactionID: "txn_001"}
@@ -120,7 +118,7 @@ func TestGetTransactionDetail_DatabaseError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock.NewMockTransactionRepository(ctrl) // Use mock repository
+	mockRepo := mock.NewMockTransactionRepository(ctrl)
 	transactionService := NewTransactionService(mockRepo)
 
 	req := models.GetTransactionDetailRequest{TransactionID: "txn_001"}
@@ -134,7 +132,6 @@ func TestGetTransactionDetail_DatabaseError(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, err.(*coreError.ErrorResponse).Code)
 }
 
-// Helper functions to create pointers
 func strPtr(s string) *string {
 	return &s
 }

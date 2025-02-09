@@ -33,24 +33,20 @@ import (
 )
 
 func main() {
-	// Initialize the logger
+
 	logger.Initialize()
 	defer logger.Close()
 
-	// Load config
 	appConfig := config.LoadConfig()
 
-	// Initialize Fiber app
 	app := fiber.New()
 
-	// Set up CORS
 	security.CorsSetup(app, security.CorsConfig{
 		AllowOrigins: appConfig.CORS.AllowOrigins,
 		AllowMethods: appConfig.CORS.AllowMethods,
 		AllowHeaders: appConfig.CORS.AllowHeaders,
 	})
 
-	// Set up Rate Limiting
 	security.SetupRateLimiter(app, security.RateLimiterConfig{
 		Max:        appConfig.RateLimiter.MaxRequests,
 		Expiration: time.Duration(appConfig.RateLimiter.Expiration) * time.Second,
@@ -58,7 +54,6 @@ func main() {
 
 	security.SetupHelmet(app)
 
-	// Connect to the database
 	if err := database.Connect(database.DatabaseConfig{
 		User:     appConfig.DB.User,
 		Password: appConfig.DB.Password,
@@ -70,7 +65,6 @@ func main() {
 		logger.Error("Failed to connect to the database")
 	}
 
-	// Register health check route
 	health.RegisterRoutes(app)
 
 	userRepo := userRepos.NewUserRepository(database.DB)
@@ -93,7 +87,6 @@ func main() {
 	transactionService := transactionServices.NewTransactionService(transactionRepo)
 	transactionRoutes.RegisterRoutes(app, transactionService)
 
-	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
 		logger.Fatal("Failed to start server")
 	}

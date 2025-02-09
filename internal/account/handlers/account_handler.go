@@ -16,84 +16,74 @@ func NewAccountHandler(service services.AccountService) *AccountHandler {
 	return &AccountHandler{service: service}
 }
 
-
 func (h *AccountHandler) GetAccountDetail(c *fiber.Ctx) error {
 	var req models.GetAccountDetailRequest
-	// Parse request parameters
+
 	if err := c.ParamsParser(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
 	}
 
-	// Validate the request
 	if err := coreValidator.Validate(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	// Get account details from service
 	account, err := h.service.GetAccountDetail(req)
 	if err != nil {
-		// Check for custom error response
+
 		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
 			return c.Status(errorResponse.Code).JSON(errorResponse)
 		}
-		// Default error handling
+
 		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
 	}
 
-	// Return the account details if no error
 	return c.Status(fiber.StatusOK).JSON(account)
 }
 
 func (h *AccountHandler) GetAccountByUserID(c *fiber.Ctx) error {
 	var req models.GetAccountByUserIDRequest
-	// Parse request parameters
+
 	if err := c.ParamsParser(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
 	}
 
-	// Validate the request
 	if err := coreValidator.Validate(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	// Get account details from service
 	account, err := h.service.GetAccountByUserID(req)
 	if err != nil {
-		// Check for custom error response
+
 		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
 			return c.Status(errorResponse.Code).JSON(errorResponse)
 		}
-		// Default error handling
+
 		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
 	}
 
-	// Return the account details if no error
 	return c.Status(fiber.StatusOK).JSON(account)
 }
 
 func (h *AccountHandler) GetMainAccountByUserID(c *fiber.Ctx) error {
 	var req models.GetMainAccountByUserIDRequest
-	// Parse request parameters
+
 	if err := c.ParamsParser(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, coreError.ErrInvalidParams)
 	}
 
-	// Validate the request
 	if err := coreValidator.Validate(&req); err != nil {
 		return coreError.HandleErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	// Get account details from service
 	account, err := h.service.GetMainAccountByUserID(req)
 	if err != nil {
-		// Check for custom error response
+
 		if errorResponse, ok := err.(*coreError.ErrorResponse); ok {
 			return c.Status(errorResponse.Code).JSON(errorResponse)
 		}
-		// Default error handling
+
 		return coreError.HandleErrorResponse(c, fiber.StatusInternalServerError, coreError.ErrInternalServerError)
 	}
 
-	// Return the account details if no error
 	return c.Status(fiber.StatusOK).JSON(account)
 }
