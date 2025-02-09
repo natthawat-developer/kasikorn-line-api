@@ -123,10 +123,5 @@ go test ./...
 4. Push to the branch (`git push origin feature-branch`)
 5. Create a Pull Request
 
-## Security Features
-- **CORS Protection**
-- **Rate Limiting**
-- **Helmet Middleware** for setting secure HTTP headers
-- 
 ## License
 This project is licensed under the MIT License.
