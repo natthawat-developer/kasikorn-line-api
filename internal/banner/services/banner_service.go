@@ -18,19 +18,21 @@ func NewBannerService(repo repositories.BannerRepository) BannerService {
 }
 
 func (s *bannerService) GetBannerDetails(req models.BannerRequest) ([]*models.BannerResponse, error) {
-	// ดึงข้อมูล Banner โดยใช้ userID
 	banners, errResponse := s.repo.GetBannerByUserID(req.UserID)
 	if errResponse != nil {
 		return nil, errResponse
 	}
 
-	// สร้าง Response ที่จะส่งกลับในรูปแบบ List ของ BannerResponse
+	if len(banners) == 0 {
+		return []*models.BannerResponse{}, nil
+	}
+
 	var bannerResponses []*models.BannerResponse
 	for _, banner := range banners {
 		bannerResponses = append(bannerResponses, &models.BannerResponse{
-			Title:      *banner.Title,
+			Title:       *banner.Title,
 			Description: *banner.Description,
-			Image:      *banner.Image,
+			Image:       *banner.Image,
 		})
 	}
 

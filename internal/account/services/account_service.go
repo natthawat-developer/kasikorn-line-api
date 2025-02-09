@@ -3,7 +3,6 @@ package services
 import (
 	"kasikorn-line-api/internal/account/models"
 	"kasikorn-line-api/internal/account/repositories"
-	"kasikorn-line-api/pkg/utils"
 )
 
 type AccountService interface {
@@ -15,9 +14,6 @@ type AccountService interface {
 type accountService struct {
 	repo repositories.AccountRepository
 }
-
-
-
 
 func NewAccountService(repo repositories.AccountRepository) AccountService {
 	return &accountService{repo: repo}
@@ -75,7 +71,7 @@ func (s *accountService) GetAccountDetail(req models.GetAccountDetailRequest) (*
 	accountResponse := &models.GetAccountDetailResponse{
 		Type:          account.Type,
 		Currency:      account.Currency,
-		AccountNumber: utils.MaskAccountNumber(account.AccountNumber),
+		AccountNumber: account.AccountNumber,
 		Issuer:        account.Issuer,
 		Amount:        accountBalance.Amount,
 		Color:         accountDetail.Color,
