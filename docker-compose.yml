@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # MySQL service
+  mysql:
+    image: mysql:8.0
+    container_name: kasikorn-line-api-mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kasikorn_line
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    networks:
+      - kasikorn-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Go app service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kasikorn-line-api-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: kasikorn-line-api-mysql-container
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: kasikorn_line
+    volumes:
+      - ./config.yaml:/root/config.yaml
+    networks:
+      - kasikorn-network
+
+volumes:
+  mysql_data:
+
+networks:
+  kasikorn-network:

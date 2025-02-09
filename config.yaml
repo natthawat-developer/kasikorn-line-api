@@ -2,11 +2,11 @@ port: "8080"
 
 db:
   driver: "mysql"
-  host: "localhost"
+  host: "kasikorn-line-api-mysql-container"
   port: "3306"
   user: "user"
   password: "password"
-  name: "assignment"
+  name: "kasikorn_line"
 
 cors:
   allow_origins: "*"
@@ -15,5 +15,4 @@ cors:
 
 rate_limiter:
   max_requests: 20        
-  expiration: 30          
-  limiter_type: 
+  expiration: 30
