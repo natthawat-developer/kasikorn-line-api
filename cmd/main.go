@@ -33,27 +33,33 @@ import (
 )
 
 func main() {
-
+	// Initialize logger
 	logger.Initialize()
 	defer logger.Close()
 
+	// Load application configuration
 	appConfig := config.LoadConfig()
 
+	// Create new Fiber instance
 	app := fiber.New()
 
+	// Setup CORS policy
 	security.CorsSetup(app, security.CorsConfig{
 		AllowOrigins: appConfig.CORS.AllowOrigins,
 		AllowMethods: appConfig.CORS.AllowMethods,
 		AllowHeaders: appConfig.CORS.AllowHeaders,
 	})
 
+	// Setup rate limiter
 	security.SetupRateLimiter(app, security.RateLimiterConfig{
 		Max:        appConfig.RateLimiter.MaxRequests,
 		Expiration: time.Duration(appConfig.RateLimiter.Expiration) * time.Second,
 	})
 
+	// Setup security headers (Helmet)
 	security.SetupHelmet(app)
 
+	// Connect to database
 	if err := database.Connect(database.DatabaseConfig{
 		User:     appConfig.DB.User,
 		Password: appConfig.DB.Password,
@@ -65,28 +71,35 @@ func main() {
 		logger.Error("Failed to connect to the database")
 	}
 
+	// Register health check routes
 	health.RegisterRoutes(app)
 
+	// Initialize user module
 	userRepo := userRepos.NewUserRepository(database.DB)
 	userService := userServices.NewUserService(userRepo)
 	userRoutes.RegisterRoutes(app, userService)
 
+	// Initialize banner module
 	bannerRepo := bannerRepos.NewBannerRepository(database.DB)
 	bannerService := bannerServices.NewBannerService(bannerRepo)
 	bannerRoutes.RegisterRoutes(app, bannerService)
 
+	// Initialize account module
 	accountRepo := accountRepos.NewAccountRepository(database.DB)
 	accountService := accountServices.NewAccountService(accountRepo)
 	accountRoutes.RegisterRoutes(app, accountService)
 
+	// Initialize debit module
 	debitRepo := debitRepos.NewDebitRepository(database.DB)
 	debitService := debitServices.NewDebitService(debitRepo)
 	debitRoutes.RegisterRoutes(app, debitService)
 
+	// Initialize transaction module
 	transactionRepo := transactionRepos.NewTransactionRepository(database.DB)
 	transactionService := transactionServices.NewTransactionService(transactionRepo)
 	transactionRoutes.RegisterRoutes(app, transactionService)
 
+	// Start the server
 	if err := app.Listen(":" + appConfig.Port); err != nil {
 		logger.Fatal("Failed to start server")
 	}
