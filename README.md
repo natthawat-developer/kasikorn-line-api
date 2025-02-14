@@ -3,6 +3,8 @@
 ## Overview
 Kasikorn Line API is a microservice-based API built with Golang and Fiber. It provides account, banner, debit, transaction, and user management functionalities.
 
+Note: Let's discuss further details during the interview.
+
 ## Features
 - User authentication and management
 - Account and transaction handling
@@ -126,12 +128,56 @@ Run unit tests:
 go test ./...
 ```
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-branch`)
-3. Commit your changes (`git commit -m "Add new feature"`)
-4. Push to the branch (`git push origin feature-branch`)
-5. Create a Pull Request
+### **Service Optimization**  
+
+To achieve **optimized service latency**, consider the following:
+
+1. **Architectural Design**  
+   - Implement a **Backend-for-Frontend (BFF)** pattern, followed by an **Orchestrator**, then a **Core Service**, and finally the **Database**.  
+   - Use **Master-Slave database replication** for high read/write performance.  
+
+2. **Load Balancing**  
+   - Implement a **latency-aware load balancing algorithm** to dynamically route requests to the fastest available service instance.  
+
+3. **Performance Tuning**  
+   - **Step 1: Optimize Database Queries** to ensure efficient indexing and query execution plans.  
+   - **Step 2: Refactor Service Layer** to enhance responsiveness. If a service requires multiple external API calls, use **Goroutines** to execute them concurrently and reduce latency.  
+   - **Step 3: Use gRPC** instead of REST when high performance is required, as gRPC offers lower latency and better efficiency over HTTP/2.  
+
+### **Database Optimization**  
+
+To improve database performance and integrity, consider the following:
+
+1. **Foreign Key Constraints**  
+   - Define **foreign keys** to enforce data integrity. For example:
+   ```sql
+   ALTER TABLE account_balances ADD CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+   ALTER TABLE account_details ADD CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+   ```
+   - This ensures referential integrity and prevents orphaned records.  
+
+2. **Indexing Frequently Queried Columns**  
+   - Add indexes to speed up queries, especially for columns like `user_id` in `transactions`, `accounts`, and `debit_cards`.  
+   ```sql
+   CREATE INDEX idx_user_id ON transactions(user_id);
+   ```
+
+3. **Optimizing Primary Keys**  
+   - Instead of using `VARCHAR(50)`, consider **UUID (`CHAR(36)`)** or **BIGINT** for primary keys to improve indexing efficiency.  
+
+4. **Removing or Documenting Dummy Columns**  
+   - If columns like `dummy_col_1`, `dummy_col_2`, etc., are placeholders, either **remove them** or provide proper documentation for their intended use.  
+
+5. **Enhancing the Transactions Table**  
+   - Add essential fields to make the transaction records more meaningful:  
+   ```sql
+   ALTER TABLE transactions
+   ADD COLUMN amount DECIMAL(15,2) NOT NULL,
+   ADD COLUMN transaction_type ENUM('credit', 'debit') NOT NULL,
+   ADD COLUMN status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
+   ADD COLUMN timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+   ```
+   - This helps in tracking financial transactions more effectively.  
 
 ## License
 This project is licensed under the MIT License.
